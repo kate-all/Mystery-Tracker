@@ -48,16 +48,20 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
+			// Declaring and initializing the json file
 			File f = new File("Murder-on-the-2nd-Floor-Raw-Data.json");
-
+			// Declaring and initializing an array of DataPoint objects
 			DataPoint [] dataPoints = new DataPoint[452];
 
 			try {
+				//Reading the actual file
 				BufferedReader in = new BufferedReader(new FileReader(f));
 
 				String line = "", time = "", device = "", id = "", event = "";
 				char guest = 'a';
 				int lineNum = 0, pointNum = 0;
+				/* Storing each event in the JSON file as
+				an object in the array of DataPoint*/
 				for(int i = 0; i < 452; i++) {
 					dataPoints[i] = new DataPoint();
 					lineNum = 0;
@@ -84,6 +88,7 @@ public class Main extends Application {
 							guest = line.charAt(21);
 							dataPoints[i].setGuest(guest+"");
 						}
+						// Converting and storing given time (in UTC) in Eastern Standard Time
 						Date date = new Date(dataPoints[i].getTime()*1000L);
 						DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 						format.setTimeZone(TimeZone.getTimeZone("EST"));
@@ -91,7 +96,6 @@ public class Main extends Application {
 						dataPoints[i].setEst(formatted);
 						lineNum++;
 
-						//System.out.println("i: " + i + " line: " + line + " time: " + time + " device: " + device + " id: " + id + " event: " + event + " guest: " + guest + "est:"+ formatted);
 					}while(lineNum < 6);
 				}
 				in.close();
@@ -100,7 +104,7 @@ public class Main extends Application {
 			}
 			//Sorting the array of Data Points by name
 			Arrays.sort(dataPoints, DataPoint.DataPointComparator);
-
+			// Renaming given data fields to make them clear when displayed 
 			for (int i = 0; i < dataPoints.length; i++) 
 			{
 				if(dataPoints[i].getId().charAt(0)== '1' || dataPoints[i].getId().charAt(0) =='2') {
@@ -263,37 +267,16 @@ public class Main extends Application {
 				{
 					dataPoints[i].setId("stairwell");
 				}
-					
-					
-				/*System.out.println("i: " + i + " time: " + dataPoints[i].getTime() + 
-						" device: " + dataPoints[i].getDevice() +
-						" id: " + dataPoints[i].getId() +
-						" event: " + dataPoints[i].getEvent() + 
-						" guest: " + dataPoints[i].getGuest() + 
-						" est: "+ dataPoints[i].getEst());*/
+				
 			}
 
 			//UI
 			root = new Pane();
 			root.setBackground(new Background(new BackgroundFill(Color.BLANCHEDALMOND, CornerRadii.EMPTY, Insets.EMPTY)));
-
-			/*	TextArea dataText = new TextArea();
-			dataText.setText("");
-			for (int i =0; i< 452; i++){
-				dataText.setText(dataText.getText()+ 
-						(String.format("%-25s%-35s%-30s%-35s%-35s\n",
-								dataPoints[i].getEst(),  dataPoints[i].getGuest().trim(),
-						dataPoints[i].getDevice().trim(),
-						  dataPoints[i].getId(), dataPoints[i].getEvent())));
-			}
-			dataText.setPrefSize(575, 700);
-			dataText.setLayoutX(40);
-			dataText.setLayoutY(75);
-			dataText.setScrollLeft(50);
-			root.getChildren().add(dataText);
-			 */
+			// Stroing them in an observableList
 			obsDataPoints = FXCollections.observableList(Arrays.asList(dataPoints));
 			lstV = new ListView<DataPoint>(obsDataPoints);
+			// changing to a monochrome font to display evenly 
 			lstV.setCellFactory(cell -> {
 				return new ListCell<DataPoint>() {
 					@Override
@@ -310,7 +293,7 @@ public class Main extends Application {
 			lstV.setLayoutX(20);
 			lstV.setLayoutY(75);
 			root.getChildren().add(lstV);
-			
+			// Declaring and initializing the properties of the ImageView 
 			ImageView imgVFloorPlan = new ImageView();
 			Image iFloorPlan = new Image("file:Floor-Plan.jpg");
 			imgVFloorPlan.setImage(iFloorPlan);
@@ -325,7 +308,8 @@ public class Main extends Application {
 			imgVFloorPlan.setFitWidth(650);
 			root.getChildren().add(imgVFloorPlan);
 			
-			//Labels
+			//Declaring and initializing and setting properties of
+			//the Labels that display on the map when an event is selected
 			Label lblArray [] = new Label [33];
 			for(int i = 0; i < 33; i++) {
 				lblArray[i] = new Label();
@@ -361,172 +345,141 @@ public class Main extends Application {
 				});
 				root.getChildren().add(lblArray[i]);
 			}
-			
+			// Placing labels on their corresponding locations on the map
 			lblArray[0].setId("AP1-1");
 			lblArray[0].setLayoutX(875);
 			lblArray[0].setLayoutY(100);
-			//lblArray[0].setOnDragEntered(e -> lblAction(lblArray[0]));
 			
 			lblArray[1].setId("AP1-4");
 			lblArray[1].setLayoutX(1045);
 			lblArray[1].setLayoutY(108);
-			//lblArray[1].setOnDragEntered(e -> lblAction(lblArray[1]));
 			
 			lblArray[2].setId("AP1-3");
 			lblArray[2].setLayoutX(1045);
 			lblArray[2].setLayoutY(332);
-			//lblArray[2].setOnDragEntered(e -> lblAction(lblArray[2]));
 			
 			lblArray[3].setId("AP1-2");
 			lblArray[3].setLayoutX(1263);
 			lblArray[3].setLayoutY(210);
-			//lblArray[3].setOnDragEntered(e -> lblAction(lblArray[3]));
 			
 			lblArray[4].setId("AP2-1");
 			lblArray[4].setLayoutX(950);
 			lblArray[4].setLayoutY(580);
-			//lblArray[4].setOnDragEntered(e -> lblAction(lblArray[4]));
 			
 			lblArray[5].setId("AP2-2");
 			lblArray[5].setLayoutX(1270);
 			lblArray[5].setLayoutY(580);
-			//lblArray[5].setOnDragEntered(e -> lblAction(lblArray[5]));
+
 			
 			lblArray[6].setId("AP2-3");
 			lblArray[6].setLayoutX(1140);
 			lblArray[6].setLayoutY(580);
-			//lblArray[6].setOnDragEntered(e -> lblAction(lblArray[6]));
 	
 			lblArray[7].setId("105");
 			lblArray[7].setLayoutX(1045);
 			lblArray[7].setLayoutY(280);	
-			//lblArray[7].setOnDragEntered(e -> lblAction(lblArray[7]));
 			
 			lblArray[8].setId("110");
 			lblArray[8].setLayoutX(875);
 			lblArray[8].setLayoutY(195);
-			//lblArray[8].setOnDragEntered(e -> lblAction(lblArray[8]));
 			
 			lblArray[9].setId("130");
 			lblArray[9].setLayoutX(875);
 			lblArray[9].setLayoutY(285);
-			//lblArray[9].setOnDragEntered(e -> lblAction(lblArray[9]));
 			
 			lblArray[10].setId("150");
 			lblArray[10].setLayoutX(1370);
 			lblArray[10].setLayoutY(210);
-			//lblArray[10].setOnDragEntered(e -> lblAction(lblArray[10]));
 			
 			lblArray[11].setId("151");
 			lblArray[11].setLayoutX(1200);
 			lblArray[11].setLayoutY(145);
-			//lblArray[11].setOnDragEntered(e -> lblAction(lblArray[11]));
 			
 			lblArray[12].setId("152");
 			lblArray[12].setLayoutX(1180);
 			lblArray[12].setLayoutY(290);
-			//lblArray[12].setOnDragEntered(e -> lblAction(lblArray[12]));
 			
 			lblArray[13].setId("155");
 			lblArray[13].setLayoutX(1310);
 			lblArray[13].setLayoutY(85);
-			//lblArray[13].setOnDragEntered(e -> lblAction(lblArray[13]));
 			
 			lblArray[14].setId("156");
 			lblArray[14].setLayoutX(1330);
 			lblArray[14].setLayoutY(260);
-			//lblArray[14].setOnDragEntered(e -> lblAction(lblArray[14]));
 				
 			lblArray[15].setId("210");
 			lblArray[15].setLayoutX(855);
 			lblArray[15].setLayoutY(428);
-			//lblArray[15].setOnDragEntered(e -> lblAction(lblArray[15]));
 			
 			lblArray[16].setId("231");
 			lblArray[16].setLayoutX(945);
 			lblArray[16].setLayoutY(420);
-			//lblArray[16].setOnDragEntered(e -> lblAction(lblArray[16]));
 			
 			lblArray[17].setId("232");
 			lblArray[17].setLayoutX(945);
 			lblArray[17].setLayoutY(670);
-			//lblArray[17].setOnDragEntered(e -> lblAction(lblArray[17]));
 			
 			lblArray[18].setId("233");
 			lblArray[18].setLayoutX(1042);
 			lblArray[18].setLayoutY(420);
-			//lblArray[18].setOnDragEntered(e -> lblAction(lblArray[18]));
 			
 			lblArray[19].setId("235");
 			lblArray[19].setLayoutX(1132);
 			lblArray[19].setLayoutY(420);
-			//lblArray[19].setOnDragEntered(e -> lblAction(lblArray[19]));
 			
 			lblArray[20].setId("241");
 			lblArray[20].setLayoutX(1225);
 			lblArray[20].setLayoutY(435);
-			//lblArray[20].setOnDragEntered(e -> lblAction(lblArray[20]));
 			
 			lblArray[21].setId("244");
 			lblArray[21].setLayoutX(1225);
 			lblArray[21].setLayoutY(655);
-			//lblArray[21].setOnDragEntered(e -> lblAction(lblArray[21]));
 			
 			lblArray[22].setId("248");
 			lblArray[22].setLayoutX(1317);
 			lblArray[22].setLayoutY(655);
-			//lblArray[22].setOnDragEntered(e -> lblAction(lblArray[22]));
 			
 			lblArray[23].setId("250");
 			lblArray[23].setLayoutX(1370);
 			lblArray[23].setLayoutY(580);
-			//lblArray[23].setOnDragEntered(e -> lblAction(lblArray[23]));
 			
 			lblArray[24].setId("200");
 			lblArray[24].setLayoutX(1205);
 			lblArray[24].setLayoutY(555);
-			//lblArray[24].setOnDragEntered(e -> lblAction(lblArray[24]));
 			
 			lblArray[25].setId("Elevator");
 			lblArray[25].setLayoutX(1045);
 			lblArray[25].setLayoutY(530);
-			//lblArray[25].setOnDragEntered(e -> lblAction(lblArray[25]));
 			
 			lblArray[26].setId("Ice Machine");
 			lblArray[26].setLayoutX(1045);
 			lblArray[26].setLayoutY(635);
-			//lblArray[26].setOnDragEntered(e -> lblAction(lblArray[26]));
 			
 			lblArray[27].setId("Stairwell");
 			lblArray[27].setLayoutX(1395);
 			lblArray[27].setLayoutY(640);
-			//lblArray[27].setOnDragEntered(e -> lblAction(lblArray[27]));
 			
 			lblArray[28].setId("Lobby");
 			lblArray[28].setLayoutX(1043);
 			lblArray[28].setLayoutY(51);
-			//lblArray[28].setOnDragEntered(e -> lblAction(lblArray[28]));
 			
 			lblArray[29].setId("Reception");
 			lblArray[29].setLayoutX(1120);
 			lblArray[29].setLayoutY(110);
-			//lblArray[29].setOnDragEntered(e -> lblAction(lblArray[29]));
 			
 			lblArray[30].setId("Elevator");
 			lblArray[30].setLayoutX(1045);
 			lblArray[30].setLayoutY(160);
-			//lblArray[30].setOnDragEntered(e -> lblAction(lblArray[30]));
 			
 			lblArray[31].setId("Stairwell");
 			lblArray[31].setLayoutX(1395);
 			lblArray[31].setLayoutY(270);
-			//lblArray[31].setOnDragEntered(e -> lblAction(lblArray[31]));
 			
 			lblArray[32].setId("220");
 			lblArray[32].setLayoutX(855);
 			lblArray[32].setLayoutY(630);
 			
-			//ListView Stuff
+			//Displaying the corresponding label when an event is selected
 			lstV.setOnMouseClicked(new EventHandler<MouseEvent>() {
 				public void handle(MouseEvent e) {
 					MultipleSelectionModel<DataPoint> selected = lstV.getSelectionModel();
@@ -540,7 +493,7 @@ public class Main extends Application {
 					}
 				}
 			});
-			
+			// Declaring, initializing and setting properties of Button to sort by time
 			Button btnTime = new Button("Time");
 			btnTime.setPrefSize(150, 20);
 			btnTime.setLayoutX(20);
@@ -601,7 +554,7 @@ public class Main extends Application {
 				}
 			});
 			root.getChildren().add(btnTime);
-
+			// Declaring, initializing and setting properties of Device to sort by time
 			Button btnDevice = new Button("Device");
 			btnDevice.setPrefSize(100, 20);
 			btnDevice.setLayoutX(310);
@@ -662,7 +615,7 @@ public class Main extends Application {
 					root.getChildren().add(lstV);
 				}
 			});
-
+			// Declaring, initializing and setting properties of Button to sort by ID
 			Button btnDeviceId = new Button("ID");
 			btnDeviceId.setPrefSize(75, 20);
 			btnDeviceId.setLayoutX(420);
@@ -722,7 +675,7 @@ public class Main extends Application {
 					root.getChildren().add(lstV);
 				}
 			});
-
+			// Declaring, initializing and setting properties of Button to sort by Event
 			Button btnEvent = new Button("Event");
 			btnEvent.setPrefSize(200, 20);
 			btnEvent.setLayoutX(530);
@@ -782,7 +735,7 @@ public class Main extends Application {
 				}
 			});
 			root.getChildren().add(btnEvent);
-
+			// Declaring, initializing and setting properties of Button to sort by Guest
 			Button btnGuestID = new Button("Guest");
 			btnGuestID.setPrefSize(100, 20);
 			btnGuestID.setLayoutX(190);
@@ -882,20 +835,6 @@ public class Main extends Application {
 
 		//UI
 	}
-
-	/*private void lblAction(Label lbl) {
-		if(lbl.getBackground() != null) {
-			MultipleSelectionModel<DataPoint> selected = lstV.getSelectionModel();
-			DataPoint selectedDp = selected.getSelectedItem();
-			
-			lblPopUp = new Label(selectedDp.getGuest() + " ");
-			lblPopUp.setBackground(new Background(new BackgroundFill(Color.GHOSTWHITE, null, null)));
-			lblPopUp.setPrefSize(50, 30);
-			lblPopUp.setLayoutX(lbl.getLayoutX() - 20);
-			lblPopUp.setLayoutY(lbl.getLayoutY() - 40);
-			root.getChildren().add(lblPopUp);
-		}
-	}*/
 
 	public static void main(String[] args) {
 		launch(args);
