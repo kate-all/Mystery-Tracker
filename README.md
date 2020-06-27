@@ -1,4 +1,7 @@
 # Mystery Tracker
+
+[![Demo](http://img.youtube.com/vi/HEJ-nz4XhM0/0.jpg)](http://www.youtube.com/watch?v=HEJ-nz4XhM0 "Demo")
+
 Mystery Tracker reads in a large dataset from a JSON file detailing when various sensors were activated,
 what event occurred, and who activated it (among other data). It then groups the data into its individual 
 sensor events and displays it in a list, which can be easily sorted by guest, event, time, etc with a click of a button. 
